@@ -38,4 +38,6 @@ puts a.my_map {|x| x += 3 } == a.map {|x| x += 3 } ? "map passes" : "TEST 8 FAIL
 puts a.my_inject {|sum, n| sum + n } == a.inject {|sum, n| sum + n } ? "inject passes" : "TEST 9 FAILED"
 
 #test 10 multiplier
-puts a.multiply_els == a.inject {|prod, n| prod * n } ? "multiply / inject passes" : "TEST 10 FAILED"
+puts a.multiply_els(a) == a.inject {|prod, n| prod * n } ? "multiply / inject passes" : "TEST 10 FAILED"
+
+[3,4,5].my_inject{|sum, x| sum * x}

@@ -67,18 +67,16 @@ module Enumerable
 	end
 
 	def my_inject
-		collection_holder = self
-		accumulator = collection_holder.slice!(0)
-		collection_holder.my_each do |x|
+		accumulator = self.first
+		self.my_each do |x|
+			next if x == self.first
 			accumulator = yield(accumulator, x)
 		end
 		accumulator
 	end
 
-	def multiply_els
-		prod = 1
-		prod = self.my_inject { |product, n| product * n }		
-		prod
+	def multiply_els(ary)
+		ary.my_inject { |product, n| product * n }		
 	end
 end
 
