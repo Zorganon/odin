@@ -1,5 +1,5 @@
 
-class Game < BasicObject
+class Game < Object
 	attr_accessor :player1, :player2, :turn, :winner
 
 	def initialize
@@ -10,20 +10,20 @@ class Game < BasicObject
 
 #----------------the main shabang--------
 	def play(board)
+			board.show
 		begin
 			@current_player = @turn.odd? ? "X" : "O"
-			board.show
 			turn(board)
-			endCheck(board)
-		end while !@winner
+			board.show
+		end while !endCheck(board)
 		puts "Winner is #{@current_player}"
 	end
 #------------------------
 
 	def turn(board)
 		move = {}
-		move[:player] = current_player
-		puts "Turn #{@turn}, #{current_player}'s up!"
+		move[:player] = @current_player
+		puts "Turn #{@turn}, #{@current_player}'s up!"
 		move[:row] = getRow
 		move[:col] = getCol
 		board.newMove(move)
@@ -32,10 +32,7 @@ class Game < BasicObject
 
 	def endCheck(board)
 		return true if board.stalemate?
-		if board.hasWinner?
-			@winner = true
-		end
-		return false
+		board.hasWinner?
 	end
 
 	def getRow
@@ -43,7 +40,7 @@ class Game < BasicObject
 		puts "which row do you want to play in?"
 		begin
 			puts "Top, Middle, or Bottom?"
-			rowInput = gets.chomp.strip!
+			rowInput = gets.chomp
 		end while !checkRow(rowInput)
 		return checkRow(rowInput)
 	end
@@ -52,13 +49,13 @@ class Game < BasicObject
 		#get and check Column
 		begin
 			puts "which column? Left, Middle, or Right?"
-			colInput = gets.chomp.strip!
+			colInput = gets.chomp
 		end while !checkCol(colInput)
 		return checkCol(colInput)
 	end
 
 	def checkRow(argrow)
-		row = argrow
+		row = argrow.to_s
 		# validates the row and returns a numeric value
 		if row.match(/^Top$/i) || row.match(/^t$/i)
 			row = 0
@@ -80,7 +77,7 @@ class Game < BasicObject
 			col = 0
 		elsif col.match(/^Middle/i) || col.match(/^m$/i)
 			col = 1
-		elsif col.match(/^Bottom/i) || col.match(/^b$/i)
+		elsif col.match(/^Right/i) || col.match(/^r$/i)
 			col = 2
 		else
 			puts "Bad input. type like, 'Bottom' or 'b' "
