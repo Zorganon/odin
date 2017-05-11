@@ -8,47 +8,62 @@
 # Blk, Wht, Gre, Blu, Red, Yel
 # Colors is an array.
 
-require 'sinatra'
-require 'json'
+# require 'sinatra'
+# require 'json'
+
+# ######## sinatra stuff ##########
+# set :port, 8080
+# set :environment, :production
+# ######
 
 def masterMind
 
-	game.start
-
-
-
+	Game.new
 
 end
-
-
 
 class Game < Object
 	attr_accessor :turn, 
 	attr_reader :player_role, :answer, :colors
 
-
-
 	def initialize
 		@colors = [Blk, Wht, Gre, Blu, Red, Yel]
 		@turn = 1
 		@player_role = "guesser"
-		@answer = [@colors.sample, @colors.sample, @colors.sample, @colors.sample]
-	end
-
-	def start
-		#initializes answer and launches guess loop?
-
+		@answer = {0 => @colors.sample, 1 => @colors.sample, 2 => @colors.sample, 3 => @colors.sample}
 	end
 
 	def turnLoop
 		while #guess incorrect
 			#print the board
 			#ask for a guess
+			guess = Guess.new
 			#save the guess
+			guess.judge(@answer)
 			#judge the guess
-			
+		end
+	end
+
+	def getGuess
+		begin
+			puts "type your guess using the following numbers for corresponding colors"
+			puts "1 for Black, 2 for White, 3 for Green, 4 for Blue, 5 for Red, 6 for Yellow"
+			puts "Ex: Black, Yellow, Green, Black  would be entered as 1631"
+			num = gets.chomp.split('')
+			if num.all? {|x| x == 1 || x == 2 || x == 3 || x == '4'|| x == '5' || x == '6'}
+				new_guess = num
+			end
+
+	end
 
 end
+
+class Board < Object
+	@current_turn
+
+	def show
+	end
+
 
 
 
@@ -62,42 +77,38 @@ class Guess < Object
 	end
 
 	def show
-		puts "_#{@pegs[0]}_|_#{@pegs[1]}_|_#{@pegs[2]}_|_#{@pegs[3]}_| Black: #{hint_pegs[:black]}, White: #{hint_pegs[:white]}"
+		puts "_#{@pegs[:0]}_|_#{@pegs[:1]}_|_#{@pegs[:2]}_|_#{@pegs[:3]}_| Black: #{hint_pegs[:black]}, White: #{hint_pegs[:white]}"
 	end
 
 	def judge(answer)
 		#PEGS IS A HASH, ANSWERS ARE ARRAY
-		@pegs.each.with_index do |peg, i|
-			if peg == answer[i]
+		@pegs.each do |(k, peg)|
+			if peg == answer[k]
 				@hint_pegs[:black] += 1
 			end
 			if answer.include?(peg)
-				ind = answer.find_index(peg)
-				answer.delete_at(ind)
+				answer.delete_at(answer.find_index(peg))
 				@hint_pegs[:white] += 1
 			end
 		end
 	end
 
+	def correct?(answer)
+		@pegs == answer
 	end
-
-	def correct?
 end
 
 
 classes:
 	guess
-		.clean
 		.submit
 		.show
-		.addPegs
-
-	pegpusher
 		.judge
-		.pushpegs - adds pegs to guess?
-		
-	aiguesser
-		.guess
+
+	Game
+		.start
+		.turnLoop
+		.getGuess
 
 
 tests:
