@@ -17,13 +17,15 @@
 # ######
 
 def masterMind
-
-	Game.new
+	game = Game.new
+	board = Board.new
+	endCond = game.turnLoop(board)
+	
 
 end
 
 class Game < Object
-	attr_accessor :turn, 
+	attr_accessor :turn
 	attr_reader :player_role, :answer, :colors
 
 	def initialize
@@ -33,46 +35,57 @@ class Game < Object
 		@answer = {0 => @colors.sample, 1 => @colors.sample, 2 => @colors.sample, 3 => @colors.sample}
 	end
 
-	def turnLoop
-		while #guess incorrect
-			#print the board
-			#ask for a guess
-			guess = Guess.new
-			#save the guess
+############ Core Game Loop
+	def turnLoop(board)
+		while @turn < 13
+			board.show
+			guess = Guess.new(getGuess)
 			guess.judge(@answer)
-			#judge the guess
+			board.addGuess(guess)
+			if guess.correct?
+				endCond = "You Won!"
+				return endCond
+			@turn += 1
 		end
+		if 
 	end
+########
 
 	def getGuess
+		new_guess = nil
 		begin
 			puts "type your guess using the following numbers for corresponding colors"
 			puts "1 for Black, 2 for White, 3 for Green, 4 for Blue, 5 for Red, 6 for Yellow"
 			puts "Ex: Black, Yellow, Green, Black  would be entered as 1631"
 			num = gets.chomp.split('')
-			if num.all? {|x| x == 1 || x == 2 || x == 3 || x == '4'|| x == '5' || x == '6'}
+			if num.all? { |x| x == '1' || x == '2' || x == '3' || x == '4'|| x == '5' || x == '6' }
 				new_guess = num
 			end
-
+		end while new_guess.nil?
+		new_guess
 	end
-
 end
 
 class Board < Object
-	@current_turn
+	@guesses = {}
 
-	def show
+	def addGuess(guess)
 	end
 
+	def printBoard
+	end
+
+end
 
 
 
 class Guess < Object
 	attr_accessor :hint_pegs, :pegs
 
-	def initialize
+	def initialize(arry)
 		@hint_pegs = { black => 0, white => 0 }
-		@pegs = { 0 => "", 1 => "", 2 => "", 3 => ""}
+		@pegs = {}
+		arry.each_with_index { |a, i| @pegs[i.to_sym] => a }
 		
 	end
 
@@ -93,9 +106,10 @@ class Guess < Object
 		end
 	end
 
-	def correct?(answer)
-		@pegs == answer
+	def correct?
+		@hint_pegs[:black] == 4
 	end
+
 end
 
 
